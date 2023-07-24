@@ -16,7 +16,7 @@ http.createServer(function(req, res) {
         fields.push([field, value]);
       })
       .on('file', function(field, file) {
-        console.log(field, file);
+        console.log(field, file.newFilename, file.originalFilename);
         files.push([field, file]);
       })
       .on('end', function() {
@@ -30,7 +30,9 @@ http.createServer(function(req, res) {
             fs.renameSync(file.filepath, process.cwd() + '/' + file.originalFilename);
           } catch (err) {
             try {
-              fs.unlinkSync(file.filepath);
+              if (fs.existsSync(file.filepath)) {
+                fs.unlinkSync(file.filepath);
+              }
             } catch (err) {
               console.log('Could not remove: ' + file.filepath);
             }
