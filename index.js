@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const os = require('os');
 const fs = require('fs');
 const http = require('http');
 const formidable = require('formidable');
@@ -8,8 +9,11 @@ http.createServer(function(req, res) {
   if (req.url == '/upload') {
     let form = new formidable.IncomingForm();
     let files = []; let fields = [];
-    form.uploadDir = __dirname + '/uploads';
+    form.uploadDir = __dirname + (os.platform() === "win32"
+    ? '\\uploads' : '/uploads');
     form.multiples = true;
+    form.options.allowEmptyFiles = true;
+    form.options.minFileSize = 0;
     form
       .on('field', function(field, value) {
         console.log(field, value);
