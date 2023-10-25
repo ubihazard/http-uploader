@@ -7,7 +7,9 @@ const formidable = require('formidable');
 
 http.createServer(function(req, res) {
   if (req.url == '/upload') {
-    let form = new formidable.IncomingForm();
+    let form = new formidable.IncomingForm({
+      maxFileSize: 100 * 1024 * 1024
+    });
     let files = []; let fields = [];
     form.uploadDir = __dirname + (os.platform() === "win32"
     ? '\\uploads' : '/uploads');
@@ -53,4 +55,6 @@ http.createServer(function(req, res) {
     res.write('</form></body></html>');
     return res.end();
   }
+  req.on('error', console.error.bind(console, 'request error'));
+  res.on('error', console.error.bind(console, 'response error'));
 }).listen(8080);
